@@ -96,8 +96,8 @@
 		return collected
 	}
 
-	window.Space = window.Space || {}
-	Object.assign(window.Space, {
+	self.Space = self.Space || {}
+	Object.assign(self.Space, {
 		make,
 		getOverlapping
 	})
