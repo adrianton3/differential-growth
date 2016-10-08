@@ -49,22 +49,21 @@
 
 		Draw.translate(halfWidth, halfWidth)
 
-		let positions = []
-		let updated = false
+		const bufferTargetSize = 16
+		const buffer = []
 
 		const worker = new Worker('./src/worker/worker.js')
 
 		worker.addEventListener('message', ({ data: { type, payload } }) => {
 			if (type === 'set-frame') {
-				positions = payload
-				updated = true
+				buffer.push(payload)
 			}
 		})
 
 		worker.postMessage({ type: 'set-config', payload: config })
 		worker.postMessage({ type: 'get-frame' })
 
-		function draw () {
+		function draw (positions) {
 			Draw.clear()
 
 			Draw.lineColor('hsl(0, 100%, 100%)')
@@ -77,10 +76,13 @@
 		}
 
 		function run () {
-			if (updated) {
+			for (let i = buffer.length; i < bufferTargetSize; i++) {
 				worker.postMessage({ type: 'get-frame' })
-				updated = false
-				draw()
+			}
+
+			if (buffer.length > 0) {
+				const positions = buffer.shift()
+				draw(positions)
 			}
 
 			requestAnimationFrame(run)
