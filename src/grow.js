@@ -14,13 +14,45 @@
 
 	const halfWidth = 512 / 2
 
-	const config = {
-		inertia: 0.25,
-		attenuator: 0.03,
-		meanForce: 0.7,
-		repulsion: 0.05,
-		spawnRate: 0.5,
+	function makeGui (config) {
+		const gui = new dat.GUI
+		const dummy = {}
+
+		Object.keys(config).forEach((key) => {
+			if (typeof config[key] === 'function') {
+				gui.add(config, key)
+			} else {
+				const { min, max, step } = config[key]
+				dummy[key] = (max - min) / 2
+				gui.add(dummy, key, min, max, step)
+			}
+		})
+
+		return dummy
 	}
+
+	const config = makeGui({
+		inertia: {
+			min: 0,
+			max: 0.5,
+		},
+		attenuator: {
+			min: 0.01,
+			max: 0.07,
+		},
+		meanForce: {
+			min: 0.0,
+			max: 0.95,
+		},
+		repulsion: {
+			min: 0.01,
+			max: 0.2,
+		},
+		spawnRate: {
+			min: 0.0,
+			max: 1.0,
+		}
+	})
 
 	function ran (min, max) {
 		return Math.random() * (max - min) + min
