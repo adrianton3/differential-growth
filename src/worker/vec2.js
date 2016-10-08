@@ -41,8 +41,8 @@
 		return Math.sqrt(dx * dx + dy * dy)
 	}
 
-	window.Vec2 = window.Vec2 || {}
-	Object.assign(window.Vec2, {
+	self.Vec2 = self.Vec2 || {}
+	Object.assign(self.Vec2, {
 		make,
 		clone,
 		add,

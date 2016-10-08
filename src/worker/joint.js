@@ -83,8 +83,8 @@
 		}
 	}
 
-	window.Joint = window.Joint || {}
-	Object.assign(window.Joint, {
+	self.Joint = self.Joint || {}
+	Object.assign(self.Joint, {
 		make,
 		applyInertia,
 		applyVelocity,
