@@ -1,8 +1,8 @@
 (() => {
 	'use strict'
 
-	let renderer, stage, renderTexture, outputSprite, blobContainer
-	let blobs = []
+	let renderer, stage, renderTexture, outputSprite, blobContainer, middleContainer
+	let blobs = [], middles = []
 
 	function makeFilter () {
 		const source = `
@@ -16,9 +16,9 @@
 
 				float value = color.r;
 
-				if (value < 0.6) {
+				if (value < 0.7) {
 					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-				} else if (value < 0.8) {
+				} else if (value < 0.9) {
 					gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 				} else {
 					gl_FragColor = vec4(0.2, 0.5, 1.0, 1.0);
@@ -50,42 +50,76 @@
 
 		stage.addChild(outputSprite)
 
-		blobContainer = new PIXI.ParticleContainer(4000, {
+		blobContainer = new PIXI.ParticleContainer(3000, {
 			scale: false,
 			position: false,
-			roation: false,
+			rotation: false,
 			uvs: false,
 			alpha: false,
 		})
 
 		blobContainer.position.x = halfWidth
 		blobContainer.position.y = halfWidth
+
+		middleContainer = new PIXI.ParticleContainer(3000, {
+			scale: false,
+			position: false,
+			rotation: false,
+			uvs: false,
+			alpha: false,
+		})
+
+		middleContainer.position.x = halfWidth
+		middleContainer.position.y = halfWidth
+	}
+
+	function copyPosition (sprite, { x, y }) {
+		sprite.position.x = x
+		sprite.position.y = y
+	}
+
+	function addSprite ({ x, y }, container, list) {
+		const sprite = PIXI.Sprite.fromImage('./res/blob.png')
+		sprite.blendMode = PIXI.BLEND_MODES.ADD
+		copyPosition(sprite, { x, y })
+
+		container.addChild(sprite)
+		list.push(sprite)
 	}
 
 	function path (points) {
 		if (points.length < 2) { return }
 
 		for (let i = 0; i < blobs.length; i++) {
-			const point = points[i]
-			const blob = blobs[i]
+			copyPosition(blobs[i], points[i])
+		}
 
-			blob.position.x = point.x
-			blob.position.y = point.y
+		for (let i = 0; i < middles.length; i++) {
+			const current = points[i]
+			const next = points[i + 1]
+
+			copyPosition(middles[i], {
+				x: (current.x + next.x) / 2,
+				y: (current.y + next.y) / 2,
+			})
 		}
 
 		for (let i = blobs.length; i < points.length; i++) {
-			const point = points[i]
+			addSprite(points[i], blobContainer, blobs)
+		}
 
-			const blob = PIXI.Sprite.fromImage('./res/blob.png')
-			blob.blendMode = PIXI.BLEND_MODES.ADD
-			blob.position.x = point.x
-			blob.position.y = point.y
+		for (let i = middles.length; i < points.length - 1; i++) {
+			const current = points[i]
+			const next = points[i + 1]
 
-			blobContainer.addChild(blob)
-			blobs.push(blob)
+			addSprite({
+				x: (current.x + next.x) / 2,
+				y: (current.y + next.y) / 2,
+			}, middleContainer, middles)
 		}
 
 		renderer.render(blobContainer, renderTexture)
+		renderer.render(middleContainer, renderTexture, false)
 
 		renderer.render(stage)
 	}
