@@ -1,8 +1,6 @@
 (() => {
 	'use strict'
 
-	const halfWidth = 512 / 2
-
 	function makeGui (config) {
 		const gui = new dat.GUI
 		const dummy = {}
@@ -45,9 +43,6 @@
 
 	function main () {
 		Draw.init(document.getElementById('can'))
-		Draw.clearColor('hsl(0, 0%, 1%)')
-
-		Draw.translate(halfWidth, halfWidth)
 
 		const bufferTargetSize = 16
 		const buffer = []
@@ -63,18 +58,6 @@
 		worker.postMessage({ type: 'set-config', payload: config })
 		worker.postMessage({ type: 'get-frame' })
 
-		function draw (positions) {
-			Draw.clear()
-
-			Draw.lineColor('hsl(0, 100%, 100%)')
-			Draw.lineWidth(17)
-			Draw.path(positions)
-
-			Draw.lineColor('hsl(210, 100%, 50%)')
-			Draw.lineWidth(11)
-			Draw.path(positions)
-		}
-
 		function run () {
 			for (let i = buffer.length; i < bufferTargetSize; i++) {
 				worker.postMessage({ type: 'get-frame' })
@@ -82,7 +65,7 @@
 
 			if (buffer.length > 0) {
 				const positions = buffer.shift()
-				draw(positions)
+				Draw.path(positions)
 			}
 
 			requestAnimationFrame(run)

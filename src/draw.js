@@ -1,76 +1,98 @@
 (() => {
 	'use strict'
 
-	let canvas, con2d
-	let clearStyle = 'hsl(0, 0%, 0%)'
+	let renderer, stage, renderTexture, outputSprite, blobContainer
+	let blobs = []
 
-	function init (element) {
-		canvas = element
-		con2d = canvas.getContext('2d')
-		con2d.lineCap = 'round'
-		con2d.lineJoin = 'round'
+	function makeFilter () {
+		const source = `
+			precision mediump float;
+			
+			varying vec2 vTextureCoord;
+			uniform sampler2D uSampler;
+
+			void main () {
+				vec4 color = texture2D(uSampler, vTextureCoord);
+
+				float value = color.r;
+
+				if (value < 0.6) {
+					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+				} else if (value < 0.8) {
+					gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+				} else {
+					gl_FragColor = vec4(0.2, 0.5, 1.0, 1.0);
+				}
+			}
+		`
+
+		return new PIXI.Filter(PIXI.Filter.defaultVertexSrc, source)
 	}
 
-	function clear () {
-		const { fillStyle } = con2d
-		con2d.fillStyle = clearStyle
-		con2d.save()
-		con2d.setTransform(1, 0, 0, 1, 0, 0)
-		con2d.fillRect(0, 0, canvas.width, canvas.height)
-		con2d.restore()
-		con2d.fillStyle = fillStyle
+	function init (element) {
+		const width = element.width
+		const halfWidth = width / 2
+
+		renderer = PIXI.autoDetectRenderer(width, width, {
+			view: element,
+			backgroundColor: 0x000000,
+		})
+
+		stage = new PIXI.Container()
+		renderTexture = new PIXI.RenderTexture(renderer, renderer.width, renderer.height)
+
+		outputSprite = new PIXI.Sprite(renderTexture)
+		outputSprite.position.x = halfWidth
+		outputSprite.position.y = halfWidth
+		outputSprite.anchor.set(0.5)
+
+		outputSprite.filters = [makeFilter()]
+
+		stage.addChild(outputSprite)
+
+		blobContainer = new PIXI.ParticleContainer(4000, {
+			scale: false,
+			position: false,
+			roation: false,
+			uvs: false,
+			alpha: false,
+		})
+
+		blobContainer.position.x = halfWidth
+		blobContainer.position.y = halfWidth
 	}
 
 	function path (points) {
 		if (points.length < 2) { return }
 
-		con2d.beginPath()
+		for (let i = 0; i < blobs.length; i++) {
+			const point = points[i]
+			const blob = blobs[i]
 
-		for (let i = 0; i < points.length - 1; i++) {
-			const current = points[i]
-			const next = points[i + 1]
-
-			con2d.moveTo(current.x, current.y)
-			con2d.lineTo(next.x, next.y)
+			blob.position.x = point.x
+			blob.position.y = point.y
 		}
 
-		con2d.stroke()
-	}
+		for (let i = blobs.length; i < points.length; i++) {
+			const point = points[i]
 
-	function clearColor (color) {
-		clearStyle = color
-	}
+			const blob = PIXI.Sprite.fromImage('./res/blob.png')
+			blob.blendMode = PIXI.BLEND_MODES.ADD
+			blob.position.x = point.x
+			blob.position.y = point.y
 
-	function lineColor (color) {
-		con2d.strokeStyle = color
-	}
+			blobContainer.addChild(blob)
+			blobs.push(blob)
+		}
 
-	function lineWidth (lineWidth) {
-		con2d.lineWidth = lineWidth
-	}
+		renderer.render(blobContainer, renderTexture)
 
-	function translate (x, y) {
-		con2d.translate(x, y)
-	}
-
-	function save () {
-		con2d.save()
-	}
-
-	function restore () {
-		con2d.restore()
+		renderer.render(stage)
 	}
 
 	window.Draw = window.Draw || {}
 	Object.assign(window.Draw, {
 		init,
-		clear,
 		path,
-		clearColor,
-		lineColor,
-		lineWidth,
-		translate,
-		save,
-		restore,
 	})
 })()
