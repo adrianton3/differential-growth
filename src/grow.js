@@ -1,7 +1,7 @@
 (() => {
 	'use strict'
 
-	function makeGui (config) {
+	function makeGui (config, onChange) {
 		const gui = new dat.GUI
 		const dummy = {}
 
@@ -12,42 +12,45 @@
 				const { min, max, step } = config[key]
 				dummy[key] = (max - min) / 2
 				gui.add(dummy, key, min, max, step)
+					.onChange(onChange)
 			}
 		})
 
 		return dummy
 	}
 
-	const config = makeGui({
-		inertia: {
-			min: 0,
-			max: 0.5,
-		},
-		attenuator: {
-			min: 0.01,
-			max: 0.07,
-		},
-		meanForce: {
-			min: 0.0,
-			max: 0.95,
-		},
-		repulsion: {
-			min: 0.01,
-			max: 0.2,
-		},
-		spawnRate: {
-			min: 0.0,
-			max: 1.0,
-		}
-	})
-
 	function main () {
 		Draw.init(document.getElementById('can'))
 
-		const bufferTargetSize = 16
+		const bufferTargetSize = 2
 		const buffer = []
 
 		const worker = new Worker('./src/worker/worker.js')
+
+		const config = makeGui({
+			inertia: {
+				min: 0,
+				max: 0.5,
+			},
+			attenuator: {
+				min: 0.01,
+				max: 0.07,
+			},
+			meanForce: {
+				min: 0.0,
+				max: 0.95,
+			},
+			repulsion: {
+				min: 0.01,
+				max: 0.2,
+			},
+			spawnRate: {
+				min: 0.0,
+				max: 1.0,
+			}
+		}, () => {
+			worker.postMessage({ type: 'set-config', payload: config })
+		})
 
 		worker.addEventListener('message', ({ data: { type, payload } }) => {
 			if (type === 'set-frame') {
