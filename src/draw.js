@@ -58,7 +58,7 @@
 
 		blobContainer = new PIXI.ParticleContainer(3000, {
 			scale: false,
-			position: false,
+			position: true,
 			rotation: false,
 			uvs: false,
 			alpha: false,
@@ -69,7 +69,7 @@
 
 		middleContainer = new PIXI.ParticleContainer(3000, {
 			scale: false,
-			position: false,
+			position: true,
 			rotation: false,
 			uvs: false,
 			alpha: false,
