@@ -1,76 +1,138 @@
 (() => {
 	'use strict'
 
-	let canvas, con2d
-	let clearStyle = 'hsl(0, 0%, 0%)'
+	let renderer, stage, renderTexture, outputSprite, blobContainer, middleContainer
+	let blobs = [], middles = []
 
-	function init (element) {
-		canvas = element
-		con2d = canvas.getContext('2d')
-		con2d.lineCap = 'round'
-		con2d.lineJoin = 'round'
+	function makeFilter () {
+		const source = `
+			precision mediump float;
+			
+			varying vec2 vTextureCoord;
+			uniform sampler2D uSampler;
+
+			void main () {
+				vec4 color = texture2D(uSampler, vTextureCoord);
+
+				float value = color.r;
+
+				if (value < 0.7) {
+					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+				} else if (value < 0.9) {
+					float smooth = smoothstep(0.8, 0.9, value);
+					vec3 from = vec3(0.0);
+					vec3 to = vec3(1.0);
+					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
+				} else {
+					float smooth = smoothstep(0.9, 1.0, value);
+					vec3 from = vec3(1.0);
+					vec3 to = vec3(0.2, 0.6, 1.0);
+					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
+				}
+			}
+		`
+
+		return new PIXI.Filter(PIXI.Filter.defaultVertexSrc, source)
 	}
 
-	function clear () {
-		const { fillStyle } = con2d
-		con2d.fillStyle = clearStyle
-		con2d.save()
-		con2d.setTransform(1, 0, 0, 1, 0, 0)
-		con2d.fillRect(0, 0, canvas.width, canvas.height)
-		con2d.restore()
-		con2d.fillStyle = fillStyle
+	function init (element) {
+		const width = element.width
+		const halfWidth = width / 2
+
+		renderer = PIXI.autoDetectRenderer(width, width, {
+			view: element,
+			backgroundColor: 0x000000,
+		})
+
+		stage = new PIXI.Container()
+		renderTexture = new PIXI.RenderTexture(renderer, renderer.width, renderer.height)
+
+		outputSprite = new PIXI.Sprite(renderTexture)
+		outputSprite.position.x = halfWidth
+		outputSprite.position.y = halfWidth
+		outputSprite.anchor.set(0.5)
+
+		outputSprite.filters = [makeFilter()]
+
+		stage.addChild(outputSprite)
+
+		blobContainer = new PIXI.ParticleContainer(3000, {
+			scale: false,
+			position: false,
+			rotation: false,
+			uvs: false,
+			alpha: false,
+		})
+
+		blobContainer.position.x = halfWidth
+		blobContainer.position.y = halfWidth
+
+		middleContainer = new PIXI.ParticleContainer(3000, {
+			scale: false,
+			position: false,
+			rotation: false,
+			uvs: false,
+			alpha: false,
+		})
+
+		middleContainer.position.x = halfWidth
+		middleContainer.position.y = halfWidth
+	}
+
+	function copyPosition (sprite, { x, y }) {
+		sprite.position.x = x
+		sprite.position.y = y
+	}
+
+	function addSprite ({ x, y }, container, list) {
+		const sprite = PIXI.Sprite.fromImage('./res/blob.png')
+		sprite.blendMode = PIXI.BLEND_MODES.ADD
+		copyPosition(sprite, { x, y })
+
+		container.addChild(sprite)
+		list.push(sprite)
 	}
 
 	function path (points) {
 		if (points.length < 2) { return }
 
-		con2d.beginPath()
+		for (let i = 0; i < blobs.length; i++) {
+			copyPosition(blobs[i], points[i])
+		}
 
-		for (let i = 0; i < points.length - 1; i++) {
+		for (let i = 0; i < middles.length; i++) {
 			const current = points[i]
 			const next = points[i + 1]
 
-			con2d.moveTo(current.x, current.y)
-			con2d.lineTo(next.x, next.y)
+			copyPosition(middles[i], {
+				x: (current.x + next.x) / 2,
+				y: (current.y + next.y) / 2,
+			})
 		}
 
-		con2d.stroke()
-	}
+		for (let i = blobs.length; i < points.length; i++) {
+			addSprite(points[i], blobContainer, blobs)
+		}
 
-	function clearColor (color) {
-		clearStyle = color
-	}
+		for (let i = middles.length; i < points.length - 1; i++) {
+			const current = points[i]
+			const next = points[i + 1]
 
-	function lineColor (color) {
-		con2d.strokeStyle = color
-	}
+			addSprite({
+				x: (current.x + next.x) / 2,
+				y: (current.y + next.y) / 2,
+			}, middleContainer, middles)
+		}
 
-	function lineWidth (lineWidth) {
-		con2d.lineWidth = lineWidth
-	}
+		renderer.render(blobContainer, renderTexture)
+		renderer.render(middleContainer, renderTexture, false)
 
-	function translate (x, y) {
-		con2d.translate(x, y)
-	}
-
-	function save () {
-		con2d.save()
-	}
-
-	function restore () {
-		con2d.restore()
+		renderer.render(stage)
 	}
 
 	window.Draw = window.Draw || {}
 	Object.assign(window.Draw, {
 		init,
-		clear,
 		path,
-		clearColor,
-		lineColor,
-		lineWidth,
-		translate,
-		save,
-		restore,
 	})
 })()
