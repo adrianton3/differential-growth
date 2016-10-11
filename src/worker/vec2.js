@@ -41,8 +41,7 @@
 		return Math.sqrt(dx * dx + dy * dy)
 	}
 
-	self.Vec2 = self.Vec2 || {}
-	Object.assign(self.Vec2, {
+	define('Vec2', {
 		make,
 		clone,
 		add,

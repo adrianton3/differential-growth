@@ -68,8 +68,7 @@
 		})
 	}
 
-	self.Grow = self.Grow || {}
-	Object.assign(self.Grow, {
+	define('Grow', {
 		createJoints,
 		multiply,
 		advance,

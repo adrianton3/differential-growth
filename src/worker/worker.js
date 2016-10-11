@@ -2,6 +2,7 @@
 	'use strict'
 
 	importScripts(
+		'../define.js',
 		'./vec2.js',
 		'./space.js',
 		'./joint.js',
@@ -32,7 +33,4 @@
 			config = payload
 		}
 	})
-
-	self.worker = self.worker || {}
-	Object.assign(self.worker, {})
 })()

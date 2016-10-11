@@ -83,8 +83,7 @@
 		}
 	}
 
-	self.Joint = self.Joint || {}
-	Object.assign(self.Joint, {
+	define('Joint', {
 		make,
 		applyInertia,
 		applyVelocity,
