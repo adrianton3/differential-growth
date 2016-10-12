@@ -96,8 +96,7 @@
 		return collected
 	}
 
-	self.Space = self.Space || {}
-	Object.assign(self.Space, {
+	define('Space', {
 		make,
 		getOverlapping
 	})

@@ -130,8 +130,7 @@
 		renderer.render(stage)
 	}
 
-	window.Draw = window.Draw || {}
-	Object.assign(window.Draw, {
+	define('Draw', {
 		init,
 		path,
 	})
