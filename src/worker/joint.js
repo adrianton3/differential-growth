@@ -36,10 +36,12 @@
 	}
 
 	function applyOverlapping (config, mobile, overlapping) {
-		overlapping.forEach((fixed) => {
+		for (let i = 0; i < overlapping.length; i++) {
+			const fixed = overlapping[i]
+
 			const exit = computeExit(fixed, mobile)
 			sub(mobile.velocity, scale(exit, config.repulsion))
-		})
+		}
 	}
 
 	function applySprings (config, joint) {
