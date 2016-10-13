@@ -11,6 +11,8 @@
 
 	const { createJoints, multiply, advance } = Grow
 
+	const maxJoints = 2000
+
 	let config = {}
 
 	const joints = createJoints()
@@ -19,12 +21,15 @@
 		if (type === 'get-frame') {
 			advance(config, joints)
 
-			if (Math.random() < config.spawnRate) {
+			if (
+				joints.length < maxJoints &&
+				Math.random() < config.spawnRate
+			) {
 				multiply(joints)
 			}
 
-			const x = new Float32Array(2000)
-			const y = new Float32Array(2000)
+			const x = new Float32Array(maxJoints)
+			const y = new Float32Array(maxJoints)
 
 			for (let i = 0; i < joints.length; i++) {
 				const { position } = joints[i]
