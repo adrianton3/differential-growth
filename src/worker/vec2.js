@@ -41,6 +41,13 @@
 		return Math.sqrt(dx * dx + dy * dy)
 	}
 
+	const THRESHOLD = 0.1
+
+	function isNull({ x, y }) {
+		return -THRESHOLD < x && x < THRESHOLD &&
+			-THRESHOLD < y && y < THRESHOLD
+	}
+
 	define('Vec2', {
 		make,
 		clone,
@@ -49,5 +56,6 @@
 		scale,
 		length,
 		distance,
+		isNull,
 	})
 })()

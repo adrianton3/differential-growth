@@ -10,6 +10,7 @@
 			radius: 8,
 			left: null,
 			right: null,
+			sleeping: false,
 		}
 	}
 

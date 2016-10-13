@@ -10,7 +10,7 @@
 		applyLimits,
 	} = Joint
 
-	const { clone, add, sub, scale } = Vec2
+	const { clone, add, sub, scale, isNull } = Vec2
 
 	const halfWidth = 512 / 2
 
@@ -50,6 +50,9 @@
 		joint1.right = newJoint
 		joint2.left = newJoint
 
+		joint1.sleeping = false
+		joint2.sleeping = false
+
 		joints.splice(index + 1, 0, newJoint)
 	}
 
@@ -57,6 +60,11 @@
 		const space = Space.make(joints, { resolution: 32, halfWidth })
 
 		joints.forEach((joint) => {
+			if (joint.sleeping) {
+				joint.sleeping = false
+				return
+			}
+
 			const overlapping = Space.getOverlapping(space, joint)
 
 			applyInertia(config, joint)
@@ -65,6 +73,18 @@
 			applyAngles(config, joint)
 			applyVelocity(config, joint)
 			applyLimits(config, joint, halfWidth)
+
+			if (isNull(joint.velocity)) {
+				joint.sleeping = true
+			} else {
+				if (joint.left) {
+					joint.left.sleeping = false
+				}
+
+				if (joint.right) {
+					joint.right.sleeping = false
+				}
+			}
 		})
 	}
 
