@@ -71,19 +71,25 @@
 	}
 
 	function getOverlapping (space, that) {
-		const collected = new Set
+		const collected = []
+		const marked = []
 
 		function collect(chunk) {
 			for (let i = 0; i < chunk.length; i++) {
 				const item = chunk[i]
 
-				const dist = distance(item.position, that.position)
+				if (!item._mark) {
+					item._mark = true
+					marked.push(item)
 
-				if (
-					dist < that.radius + item.radius &&
-					that !== item
-				) {
-					collected.add(item)
+					const dist = distance(item.position, that.position)
+
+					if (
+						dist < that.radius + item.radius &&
+						that !== item
+					) {
+						collected.push(item)
+					}
 				}
 			}
 		}
@@ -96,6 +102,11 @@
 			that.position.y + that.radius,
 			collect
 		)
+
+		for (let i = 0; i < marked.length; i++) {
+			const item = marked[i]
+			item._mark = false
+		}
 
 		return collected
 	}
