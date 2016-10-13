@@ -69,7 +69,7 @@
 	}
 
 	function getOverlapping (space, that) {
-		const collected = []
+		const collected = new Set
 
 		function collect(chunk) {
 			chunk.forEach((item) => {
@@ -79,7 +79,7 @@
 					dist < that.radius + item.radius &&
 					that !== item
 				) {
-					collected.push(item)
+					collected.add(item)
 				}
 			})
 		}
