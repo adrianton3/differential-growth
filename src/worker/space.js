@@ -40,7 +40,9 @@
 	}
 
 	function populateChunks (space, items) {
-		items.forEach((item) => {
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i]
+
 			applyOnArea(
 				space,
 				item.position.x - item.radius,
@@ -51,7 +53,7 @@
 					chunk.push(item)
 				}
 			)
-		})
+		}
 	}
 
 	function make (items, { resolution, halfWidth }) {
@@ -72,7 +74,9 @@
 		const collected = new Set
 
 		function collect(chunk) {
-			chunk.forEach((item) => {
+			for (let i = 0; i < chunk.length; i++) {
+				const item = chunk[i]
+
 				const dist = distance(item.position, that.position)
 
 				if (
@@ -81,7 +85,7 @@
 				) {
 					collected.add(item)
 				}
-			})
+			}
 		}
 
 		applyOnArea(

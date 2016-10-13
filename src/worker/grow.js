@@ -59,33 +59,34 @@
 	function advance (config, joints) {
 		const space = Space.make(joints, { resolution: 32, halfWidth })
 
-		joints.forEach((joint) => {
+		for (let i = 0; i < joints.length; i++) {
+			const joint = joints[i]
+
 			if (joint.sleeping) {
 				joint.sleeping = false
-				return
-			}
-
-			const overlapping = Space.getOverlapping(space, joint)
-
-			applyInertia(config, joint)
-			applyOverlapping(config, joint, overlapping)
-			applySprings(config, joint)
-			applyAngles(config, joint)
-			applyVelocity(config, joint)
-			applyLimits(config, joint, halfWidth)
-
-			if (isNull(joint.velocity)) {
-				joint.sleeping = true
 			} else {
-				if (joint.left) {
-					joint.left.sleeping = false
-				}
+				const overlapping = Space.getOverlapping(space, joint)
 
-				if (joint.right) {
-					joint.right.sleeping = false
+				applyInertia(config, joint)
+				applyOverlapping(config, joint, overlapping)
+				applySprings(config, joint)
+				applyAngles(config, joint)
+				applyVelocity(config, joint)
+				applyLimits(config, joint, halfWidth)
+
+				if (isNull(joint.velocity)) {
+					joint.sleeping = true
+				} else {
+					if (joint.left) {
+						joint.left.sleeping = false
+					}
+
+					if (joint.right) {
+						joint.right.sleeping = false
+					}
 				}
 			}
-		})
+		}
 	}
 
 	define('Grow', {
