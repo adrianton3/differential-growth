@@ -1,0 +1,9 @@
+body {
+    background-color: hsl(0, 0%, 1%);
+}
+
+canvas {
+    border: 1px solid hsl(0, 0%, 10%);
+    margin: 0 auto;
+    display: block;
+}
