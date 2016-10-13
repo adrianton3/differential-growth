@@ -54,7 +54,19 @@
 
 		worker.addEventListener('message', ({ data: { type, payload } }) => {
 			if (type === 'set-frame') {
-				buffer.push(payload)
+				const x = new Float32Array(payload.x)
+				const y = new Float32Array(payload.y)
+
+				const expanded = []
+
+				for (let i = 0; i < payload.length; i++) {
+					expanded.push({
+						x: x[i],
+						y: y[i],
+					})
+				}
+
+				buffer.push(expanded)
 			}
 		})
 

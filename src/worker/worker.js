@@ -23,12 +23,23 @@
 				multiply(joints)
 			}
 
-			const positions = joints.map(({ position }) => position)
+			const x = new Float32Array(2000)
+			const y = new Float32Array(2000)
+
+			for (let i = 0; i < joints.length; i++) {
+				const { position } = joints[i]
+				x[i] = position.x
+				y[i] = position.y
+			}
 
 			self.postMessage({
 				type: 'set-frame',
-				payload: positions
-			})
+				payload: {
+					x: x.buffer,
+					y: y.buffer,
+					length: joints.length,
+				}
+			}, [x.buffer, y.buffer])
 		} else if (type === 'set-config') {
 			config = payload
 		}
