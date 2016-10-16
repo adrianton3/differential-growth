@@ -8,6 +8,7 @@
 			position: Vec2.make(x, y),
 			velocity: Vec2.make(0, 0),
 			radius: 8,
+			meanForce: 0.2,
 			left: null,
 			right: null,
 			sleeping: false,
@@ -63,7 +64,7 @@
 		position.y = Math.min(Math.max(-halfWidth + 32, position.y), halfWidth - 32)
 	}
 
-	function applyAngles (config, { position, velocity, left, right }) {
+	function applyAngles (config, { position, velocity, meanForce, left, right }) {
 		if (
 			left === null ||
 			right === null
@@ -81,7 +82,7 @@
 
 			add(
 				velocity,
-				scale(sub(mean, position), config.meanForce)
+				scale(sub(mean, position), meanForce)
 			)
 		}
 	}

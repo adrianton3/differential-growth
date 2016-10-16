@@ -66,6 +66,7 @@
 			const fraction = 1 / (1 + d * d)
 
 			joint.radius = 8 + fraction * 4
+			joint.meanForce = 0.2 + fraction * 0.78
 		}
 	}
 
