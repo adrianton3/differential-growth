@@ -56,8 +56,8 @@
 
 		stage.addChild(outputSprite)
 
-		blobContainer = new PIXI.ParticleContainer(3000, {
-			scale: false,
+		blobContainer = new PIXI.ParticleContainer(2000, {
+			scale: true,
 			position: true,
 			rotation: false,
 			uvs: false,
@@ -67,8 +67,8 @@
 		blobContainer.position.x = halfWidth
 		blobContainer.position.y = halfWidth
 
-		middleContainer = new PIXI.ParticleContainer(3000, {
-			scale: false,
+		middleContainer = new PIXI.ParticleContainer(2000, {
+			scale: true,
 			position: true,
 			rotation: false,
 			uvs: false,
@@ -79,15 +79,18 @@
 		middleContainer.position.y = halfWidth
 	}
 
-	function copyPosition (sprite, { x, y }) {
+	function copyPosition (sprite, { x, y, scale }) {
 		sprite.position.x = x
 		sprite.position.y = y
+		sprite.scale.x = scale
+		sprite.scale.y = scale
 	}
 
-	function addSprite ({ x, y }, container, list) {
+	function addSprite (point, container, list) {
 		const sprite = PIXI.Sprite.fromImage('./res/blob.png')
+		sprite.anchor.set(0.5)
 		sprite.blendMode = PIXI.BLEND_MODES.ADD
-		copyPosition(sprite, { x, y })
+		copyPosition(sprite, point)
 
 		container.addChild(sprite)
 		list.push(sprite)
@@ -107,6 +110,7 @@
 			copyPosition(middles[i], {
 				x: (current.x + next.x) / 2,
 				y: (current.y + next.y) / 2,
+				scale: (current.scale + next.scale) / 2,
 			})
 		}
 
@@ -121,6 +125,7 @@
 			addSprite({
 				x: (current.x + next.x) / 2,
 				y: (current.y + next.y) / 2,
+				scale: (current.scale + next.scale) / 2,
 			}, middleContainer, middles)
 		}
 
