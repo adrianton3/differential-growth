@@ -18,7 +18,7 @@
 	const joints = createJoints()
 
 	let tick = 0
-	const tickIncrement = 0.2
+	let tickIncrement = 0.2
 
 	self.addEventListener('message', ({ data: { type, payload } }) => {
 		if (type === 'get-frame') {
@@ -38,7 +38,9 @@
 			}
 
 			tick += tickIncrement
-			tick %= joints.length
+			if (tick < 0 || tick > joints.length) {
+				tickIncrement *= -1
+			}
 
 			const x = new Float32Array(maxJoints)
 			const y = new Float32Array(maxJoints)
