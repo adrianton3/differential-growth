@@ -62,11 +62,7 @@
 		for (let i = 0; i < joints.length; i++) {
 			const joint = joints[i]
 
-			const d = (i - tick) * 0.2
-			const fraction = 1 / (1 + d * d)
-
-			joint.radius = 8 + fraction * 4
-			joint.meanForce = 0.2 + fraction * 0.78
+			Joint.updateParams(joint, i, tick)
 		}
 	}
 

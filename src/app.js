@@ -20,8 +20,6 @@
 	}
 
 	function main () {
-		const baseRadius = 8
-
 		Draw.init(document.getElementById('can'))
 
 		const bufferTargetSize = 2
@@ -66,7 +64,7 @@
 					expanded.push({
 						x: x[i],
 						y: y[i],
-						scale: radius[i] / baseRadius,
+						scale: radius[i] / Joint.baseRadius,
 					})
 				}
 

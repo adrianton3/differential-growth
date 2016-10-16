@@ -3,12 +3,15 @@
 
 	const { clone, add, sub, scale, distance } = Vec2
 
+	const baseRadius = 8
+	const baseMeanForce = 0.2
+
 	function make (x, y) {
 		return {
 			position: Vec2.make(x, y),
 			velocity: Vec2.make(0, 0),
-			radius: 8,
-			meanForce: 0.2,
+			radius: baseRadius,
+			meanForce: baseMeanForce,
 			left: null,
 			right: null,
 			sleeping: false,
@@ -87,7 +90,16 @@
 		}
 	}
 
+	function updateParams (joint, index, tick) {
+		const d = (index - tick) * 0.2
+		const fraction = 1 / (1 + d * d)
+
+		joint.radius = baseRadius + fraction * 4
+		joint.meanForce = baseMeanForce + fraction * 0.78
+	}
+
 	define('Joint', {
+		baseRadius,
 		make,
 		applyInertia,
 		applyVelocity,
@@ -95,5 +107,6 @@
 		applySprings,
 		applyLimits,
 		applyAngles,
+		updateParams,
 	})
 })()
