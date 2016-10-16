@@ -20,6 +20,8 @@
 	}
 
 	function main () {
+		const baseRadius = 8
+
 		Draw.init(document.getElementById('can'))
 
 		const bufferTargetSize = 2
@@ -41,7 +43,7 @@
 				max: 0.95,
 			},
 			repulsion: {
-				min: 0.01,
+				min: 0.05,
 				max: 0.2,
 			},
 			spawnRate: {
@@ -56,6 +58,7 @@
 			if (type === 'set-frame') {
 				const x = new Float32Array(payload.x)
 				const y = new Float32Array(payload.y)
+				const radius = new Float32Array(payload.radius)
 
 				const expanded = []
 
@@ -63,6 +66,7 @@
 					expanded.push({
 						x: x[i],
 						y: y[i],
+						scale: radius[i] / baseRadius,
 					})
 				}
 

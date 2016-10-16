@@ -54,6 +54,19 @@
 		joint2.sleeping = false
 
 		joints.splice(index + 1, 0, newJoint)
+
+		return index + 1
+	}
+
+	function updateParams (joints, tick) {
+		for (let i = 0; i < joints.length; i++) {
+			const joint = joints[i]
+
+			const d = (i - tick) * 0.2
+			const fraction = 1 / (1 + d * d)
+
+			joint.radius = 8 + fraction * 4
+		}
 	}
 
 	function advance (config, joints) {
@@ -93,5 +106,6 @@
 		createJoints,
 		multiply,
 		advance,
+		updateParams,
 	})
 })()
