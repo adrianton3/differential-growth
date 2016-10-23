@@ -4,37 +4,6 @@
 	let renderer, stage, renderTexture, outputSprite, blobContainer, middleContainer
 	let blobs = [], middles = []
 
-	function makeFilter () {
-		const source = `
-			precision mediump float;
-			
-			varying vec2 vTextureCoord;
-			uniform sampler2D uSampler;
-
-			void main () {
-				vec4 color = texture2D(uSampler, vTextureCoord);
-
-				float value = color.a;
-
-				if (value < 0.7) {
-					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-				} else if (value < 0.9) {
-					float smooth = smoothstep(0.8, 0.9, value);
-					const vec3 from = vec3(0.0);
-					const vec3 to = vec3(1.0);
-					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
-				} else {
-					float smooth = smoothstep(0.9, 1.0, value);
-					const vec3 from = vec3(1.0);					
-					vec3 to = color.rgb;
-					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
-				}
-			}
-		`
-
-		return new PIXI.Filter(PIXI.Filter.defaultVertexSrc, source)
-	}
-
 	function init (element) {
 		const width = element.width
 		const halfWidth = width / 2
@@ -52,7 +21,7 @@
 		outputSprite.position.y = halfWidth
 		outputSprite.anchor.set(0.5)
 
-		outputSprite.filters = [makeFilter()]
+		outputSprite.filters = [Outline.make()]
 
 		stage.addChild(outputSprite)
 
