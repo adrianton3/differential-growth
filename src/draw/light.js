@@ -35,7 +35,9 @@
 
 				float specular = pow(diffuse, 20.0);
 
-				gl_FragColor = vec4(color.rgb * (diffuse * 0.8 + specular) * ao, 1.0);
+				float vig = 1.0 - smoothstep(0.0, 0.5, distance(vTextureCoord, center));
+
+				gl_FragColor = vec4(color.rgb * (diffuse * 0.8 + specular) * ao * vig, 1.0);
 			}
 		`
 
