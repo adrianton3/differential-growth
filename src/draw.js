@@ -14,19 +14,19 @@
 			void main () {
 				vec4 color = texture2D(uSampler, vTextureCoord);
 
-				float value = color.r;
+				float value = color.a;
 
 				if (value < 0.7) {
 					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 				} else if (value < 0.9) {
 					float smooth = smoothstep(0.8, 0.9, value);
-					vec3 from = vec3(0.0);
-					vec3 to = vec3(1.0);
+					const vec3 from = vec3(0.0);
+					const vec3 to = vec3(1.0);
 					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
 				} else {
 					float smooth = smoothstep(0.9, 1.0, value);
-					vec3 from = vec3(1.0);
-					vec3 to = vec3(0.2, 0.6, 1.0);
+					const vec3 from = vec3(1.0);					
+					vec3 to = color.rgb;
 					gl_FragColor = vec4(mix(from, to, smooth), 1.0);
 				}
 			}
@@ -61,7 +61,7 @@
 			position: true,
 			rotation: false,
 			uvs: false,
-			alpha: false,
+			alpha: true,
 		})
 
 		blobContainer.position.x = halfWidth
@@ -72,7 +72,7 @@
 			position: true,
 			rotation: false,
 			uvs: false,
-			alpha: false,
+			alpha: true,
 		})
 
 		middleContainer.position.x = halfWidth
@@ -101,6 +101,8 @@
 
 		for (let i = 0; i < blobs.length; i++) {
 			copyPosition(blobs[i], points[i])
+
+			blobs[i].alpha = Math.min(Math.max(0.0, Math.sin(i * 0.1) + 0.9), 1.0)
 		}
 
 		for (let i = 0; i < middles.length; i++) {
@@ -112,6 +114,8 @@
 				y: (current.y + next.y) / 2,
 				scale: (current.scale + next.scale) / 2,
 			})
+
+			middles[i].alpha = Math.min(Math.max(0.0, Math.sin(i * 0.1) + 0.9), 1.0)
 		}
 
 		for (let i = blobs.length; i < points.length; i++) {
