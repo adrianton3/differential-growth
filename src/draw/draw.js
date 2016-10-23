@@ -21,7 +21,7 @@
 		outputSprite.position.y = halfWidth
 		outputSprite.anchor.set(0.5)
 
-		outputSprite.filters = [Outline.make()]
+		outputSprite.filters = [Light.make()]
 
 		stage.addChild(outputSprite)
 
