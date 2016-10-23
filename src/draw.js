@@ -45,7 +45,7 @@
 		})
 
 		stage = new PIXI.Container()
-		renderTexture = new PIXI.RenderTexture(renderer, renderer.width, renderer.height)
+		renderTexture = PIXI.RenderTexture.create(width, width)
 
 		outputSprite = new PIXI.Sprite(renderTexture)
 		outputSprite.position.x = halfWidth
@@ -56,7 +56,7 @@
 
 		stage.addChild(outputSprite)
 
-		blobContainer = new PIXI.ParticleContainer(2000, {
+		blobContainer = new PIXI.particles.ParticleContainer(2000, {
 			scale: true,
 			position: true,
 			rotation: false,
@@ -67,7 +67,7 @@
 		blobContainer.position.x = halfWidth
 		blobContainer.position.y = halfWidth
 
-		middleContainer = new PIXI.ParticleContainer(2000, {
+		middleContainer = new PIXI.particles.ParticleContainer(2000, {
 			scale: true,
 			position: true,
 			rotation: false,
