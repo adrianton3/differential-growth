@@ -20,7 +20,28 @@
 	}
 
 	function main () {
-		Draw.init(document.getElementById('can'))
+		const canvas = document.getElementById('can')
+		const { width } = canvas
+
+		const pointer = {
+			x: 0.5,
+			y: 0.5,
+		}
+
+		Draw.init(canvas)
+
+		canvas.addEventListener('mousemove', (event) => {
+			const x = event.offsetX / width
+			const y = event.offsetY / width
+
+			pointer.x = x
+			pointer.y = y
+
+			worker.postMessage({
+				type: 'set-pointer',
+				payload: { x, y },
+			})
+		})
 
 		const bufferTargetSize = 2
 		const buffer = []
@@ -82,7 +103,7 @@
 
 			if (buffer.length > 0) {
 				const positions = buffer.shift()
-				Draw.path(positions)
+				Draw.path(positions, pointer)
 			}
 
 			requestAnimationFrame(run)
