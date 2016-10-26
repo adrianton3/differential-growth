@@ -20,11 +20,13 @@
 	let tick = 0
 	let tickIncrement = 0.2
 
+	let pointer = { x: 0, y: 0 }
+
 	self.addEventListener('message', ({ data: { type, payload } }) => {
 		if (type === 'get-frame') {
 			updateParams(joints, tick)
 
-			advance(config, joints)
+			advance(config, joints, pointer)
 
 			if (
 				joints.length < maxJoints &&
@@ -65,6 +67,8 @@
 			}, [x.buffer, y.buffer, radius.buffer])
 		} else if (type === 'set-config') {
 			config = payload
+		} else if (type === 'set-pointer') {
+			pointer = payload
 		}
 	})
 })()

@@ -36,6 +36,11 @@
 
 			pointer.x = x
 			pointer.y = y
+
+			worker.postMessage({
+				type: 'set-pointer',
+				payload: { x, y },
+			})
 		})
 
 		const bufferTargetSize = 2

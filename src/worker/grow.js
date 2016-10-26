@@ -8,9 +8,10 @@
 		applyAngles,
 		applyVelocity,
 		applyLimits,
+		computeExit,
 	} = Joint
 
-	const { clone, add, sub, scale, isNull } = Vec2
+	const { clone, add, sub, scale, isNull, distance } = Vec2
 
 	const halfWidth = 768 / 2
 
@@ -66,8 +67,35 @@
 		}
 	}
 
-	function advance (config, joints) {
+	function applyInteraction (space, pointer) {
+		const translated = sub(clone(pointer), Vec2.make(halfWidth, halfWidth))
+
+		const overlaps = Space.getOverlapping(space, {
+			position: {
+				x: Math.min(Math.max(translated.x, -halfWidth + 32), halfWidth - 32),
+				y: Math.min(Math.max(translated.y, -halfWidth + 32), halfWidth - 32),
+			},
+			radius: 30,
+		})
+
+		for (let i = 0; i < overlaps.length; i++) {
+			const overlap = overlaps[i]
+
+			const dist = distance(overlap.position, translated)
+			const repulsion = 4 / (dist + 0.1)
+
+			const exit = computeExit({
+				position: translated,
+				radius: 30,
+			}, overlap)
+			sub(overlap.velocity, scale(exit, repulsion))
+		}
+	}
+
+	function advance (config, joints, pointer) {
 		const space = Space.make(joints, { resolution: 32, halfWidth })
+
+		applyInteraction(space, pointer)
 
 		for (let i = 0; i < joints.length; i++) {
 			const joint = joints[i]
