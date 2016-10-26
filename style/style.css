@@ -1,8 +1,22 @@
 body {
     background-color: hsl(0, 0%, 0%);
+    color: hsl(0, 0%, 80%);
 }
 
 canvas {
     margin: 0 auto;
+    margin-bottom: 32px;
     display: block;
+}
+
+p {
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 20px;
+    font-family: sans-serif;
+    font-size: 0.9em;
+}
+
+a {
+    color: hsl(0, 0%, 80%);
 }
