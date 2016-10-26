@@ -3,7 +3,7 @@
 
 	const { clone, add, sub, scale, distance } = Vec2
 
-	const baseRadius = 8
+	const baseRadius = 14
 	const baseMeanForce = 0.2
 
 	function make (x, y) {
@@ -94,7 +94,7 @@
 		const d = (index - tick) * 0.2
 		const fraction = 1 / (1 + d * d)
 
-		joint.radius = baseRadius + fraction * 4
+		joint.radius = baseRadius + fraction * 5
 		joint.meanForce = baseMeanForce + fraction * 0.78
 	}
 

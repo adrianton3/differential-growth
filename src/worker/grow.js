@@ -12,7 +12,7 @@
 
 	const { clone, add, sub, scale, isNull } = Vec2
 
-	const halfWidth = 512 / 2
+	const halfWidth = 768 / 2
 
 	function ran (min, max) {
 		return Math.random() * (max - min) + min
