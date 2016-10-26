@@ -31,15 +31,12 @@
 		Draw.init(canvas)
 
 		canvas.addEventListener('mousemove', (event) => {
-			const x = event.offsetX / width
-			const y = event.offsetY / width
-
-			pointer.x = x
-			pointer.y = y
+			pointer.x = event.offsetX / width
+			pointer.y = event.offsetY / width
 
 			worker.postMessage({
 				type: 'set-pointer',
-				payload: { x, y },
+				payload: { x: event.offsetX, y: event.offsetY },
 			})
 		})
 
