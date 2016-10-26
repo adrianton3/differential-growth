@@ -40,7 +40,7 @@
 			})
 		})
 
-		const bufferTargetSize = 2
+		const bufferTargetSize = 4
 		const buffer = []
 
 		const worker = new Worker('./src/worker/worker.js')
