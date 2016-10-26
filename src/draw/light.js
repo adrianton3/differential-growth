@@ -8,6 +8,7 @@
 			varying vec2 vTextureCoord;
 			uniform sampler2D uSampler;
 			uniform mat3 mappedMatrix;
+			uniform vec2 pointerPos;
 
 			void main () {
 				vec2 textureCoord = (vec3(vTextureCoord, 1.0) * mappedMatrix).xy;
@@ -30,7 +31,7 @@
 				vec3 normal = normalize(cross(deltaX, deltaY));
 
 				const vec2 center = vec2(0.5, 0.5);
-				vec3 light = vec3(center, heightMultiplier * 1.1);
+				vec3 light = vec3(mix(pointerPos, center, 0.5), heightMultiplier * 1.1);
 
 				vec3 fragment = vec3(textureCoord, current * heightMultiplier);
 				float diffuse = max(0.0, dot(normal, normalize(light - fragment)));
@@ -44,9 +45,13 @@
 		`
 
 		const uniforms = {
+			pointerPos: {
+				type: 'f2',
+				value: [0.5, 0.5],
+			},
 			mappedMatrix: {
 				type: 'mat3',
-				value: new PIXI.Matrix()
+				value: new PIXI.Matrix(),
 			},
 		}
 

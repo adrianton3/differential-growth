@@ -3,10 +3,13 @@
 
 	let renderer, stage, renderTexture, outputSprite, blobContainer, middleContainer
 	let blobs = [], middles = []
+	let filter
 
 	function init (element) {
 		const width = element.width
 		const halfWidth = width / 2
+
+		filter = Light.make()
 
 		renderer = PIXI.autoDetectRenderer(width, width, {
 			view: element,
@@ -21,7 +24,7 @@
 		outputSprite.position.y = halfWidth
 		outputSprite.anchor.set(0.5)
 
-		outputSprite.filters = [Light.make()]
+		outputSprite.filters = [filter]
 
 		stage.addChild(outputSprite)
 
@@ -65,7 +68,7 @@
 		list.push(sprite)
 	}
 
-	function path (points) {
+	function path (points, pointer) {
 		if (points.length < 2) { return }
 
 		for (let i = 0; i < blobs.length; i++) {
@@ -101,6 +104,11 @@
 				scale: (current.scale + next.scale) / 2,
 			}, middleContainer, middles)
 		}
+
+		const { pointerPos } = filter.uniforms
+
+		pointerPos[0] = pointer.x
+		pointerPos[1] = pointer.y
 
 		renderer.render(blobContainer, renderTexture)
 		renderer.render(middleContainer, renderTexture, false)
