@@ -28,7 +28,7 @@
 
 		stage.addChild(outputSprite)
 
-		blobContainer = new PIXI.particles.ParticleContainer(2000, {
+		blobContainer = new PIXI.particles.ParticleContainer(2700, {
 			scale: true,
 			position: true,
 			rotation: false,
@@ -39,7 +39,7 @@
 		blobContainer.position.x = halfWidth
 		blobContainer.position.y = halfWidth
 
-		middleContainer = new PIXI.particles.ParticleContainer(2000, {
+		middleContainer = new PIXI.particles.ParticleContainer(2700, {
 			scale: true,
 			position: true,
 			rotation: false,

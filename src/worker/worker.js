@@ -11,7 +11,7 @@
 
 	const { createJoints, multiply, advance, updateParams } = Grow
 
-	const maxJoints = 2000
+	const maxJoints = 2700
 
 	let config = {}
 
