@@ -20,14 +20,37 @@
 	}
 
 	function main () {
-		Draw.init(document.getElementById('can'))
+		const canvas = document.getElementById('can')
+		const { width } = canvas
 
-		const bufferTargetSize = 2
+		const pointer = {
+			x: 0.5,
+			y: 0.5,
+		}
+
+		Draw.init(canvas)
+
+		canvas.addEventListener('mousemove', (event) => {
+			pointer.x = event.offsetX / width
+			pointer.y = event.offsetY / width
+
+			worker.postMessage({
+				type: 'set-pointer',
+				payload: { x: event.offsetX, y: event.offsetY },
+			})
+		})
+
+		const bufferTargetSize = 4
 		const buffer = []
 
 		const worker = new Worker('./src/worker/worker.js')
 
-		const config = makeGui({
+		const config = location.hash ? {
+			inertia: 0.25,
+			attenuator: 0.03,
+			repulsion: 0.07,
+			spawnRate: 1.0,
+		} : makeGui({
 			inertia: {
 				min: 0,
 				max: 0.5,
@@ -36,12 +59,8 @@
 				min: 0.01,
 				max: 0.07,
 			},
-			meanForce: {
-				min: 0.0,
-				max: 0.95,
-			},
 			repulsion: {
-				min: 0.01,
+				min: 0.05,
 				max: 0.2,
 			},
 			spawnRate: {
@@ -56,6 +75,7 @@
 			if (type === 'set-frame') {
 				const x = new Float32Array(payload.x)
 				const y = new Float32Array(payload.y)
+				const radius = new Float32Array(payload.radius)
 
 				const expanded = []
 
@@ -63,6 +83,7 @@
 					expanded.push({
 						x: x[i],
 						y: y[i],
+						scale: radius[i] / Joint.baseRadius,
 					})
 				}
 
@@ -80,7 +101,7 @@
 
 			if (buffer.length > 0) {
 				const positions = buffer.shift()
-				Draw.path(positions)
+				Draw.path(positions, pointer)
 			}
 
 			requestAnimationFrame(run)

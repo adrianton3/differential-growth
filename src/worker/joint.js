@@ -3,11 +3,15 @@
 
 	const { clone, add, sub, scale, distance } = Vec2
 
+	const baseRadius = 14
+	const baseMeanForce = 0.2
+
 	function make (x, y) {
 		return {
 			position: Vec2.make(x, y),
 			velocity: Vec2.make(0, 0),
-			radius: 8,
+			radius: baseRadius,
+			meanForce: baseMeanForce,
 			left: null,
 			right: null,
 			sleeping: false,
@@ -63,7 +67,7 @@
 		position.y = Math.min(Math.max(-halfWidth + 32, position.y), halfWidth - 32)
 	}
 
-	function applyAngles (config, { position, velocity, left, right }) {
+	function applyAngles (config, { position, velocity, meanForce, left, right }) {
 		if (
 			left === null ||
 			right === null
@@ -81,12 +85,21 @@
 
 			add(
 				velocity,
-				scale(sub(mean, position), config.meanForce)
+				scale(sub(mean, position), meanForce)
 			)
 		}
 	}
 
+	function updateParams (joint, index, tick) {
+		const d = (index - tick) * 0.2
+		const fraction = 1 / (1 + d * d)
+
+		joint.radius = baseRadius + fraction * 5
+		joint.meanForce = baseMeanForce + fraction * 0.78
+	}
+
 	define('Joint', {
+		baseRadius,
 		make,
 		applyInertia,
 		applyVelocity,
@@ -94,5 +107,7 @@
 		applySprings,
 		applyLimits,
 		applyAngles,
+		updateParams,
+		computeExit,
 	})
 })()

@@ -70,11 +70,14 @@
 		return space
 	}
 
-	function getOverlapping (space, that) {
+	const getOverlapping = (() => {
+		// for some reason chrome backs off with "optimised too many times"
+		// this horrible hack seems to fix it
 		const collected = []
 		const marked = []
+		let that
 
-		function collect(chunk) {
+		function collect (chunk) {
 			for (let i = 0; i < chunk.length; i++) {
 				const item = chunk[i]
 
@@ -94,22 +97,29 @@
 			}
 		}
 
-		applyOnArea(
-			space,
-			that.position.x - that.radius,
-			that.position.y - that.radius,
-			that.position.x + that.radius,
-			that.position.y + that.radius,
-			collect
-		)
+		return (space, _that) => {
+			that = _that
 
-		for (let i = 0; i < marked.length; i++) {
-			const item = marked[i]
-			item._mark = false
+			collected.length = 0
+			marked.length = 0
+
+			applyOnArea(
+				space,
+				that.position.x - that.radius,
+				that.position.y - that.radius,
+				that.position.x + that.radius,
+				that.position.y + that.radius,
+				collect
+			)
+
+			for (let i = 0; i < marked.length; i++) {
+				const item = marked[i]
+				item._mark = false
+			}
+
+			return collected
 		}
-
-		return collected
-	}
+	})()
 
 	define('Space', {
 		make,
