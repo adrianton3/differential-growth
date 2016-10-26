@@ -45,7 +45,12 @@
 
 		const worker = new Worker('./src/worker/worker.js')
 
-		const config = makeGui({
+		const config = location.hash ? {
+			inertia: 0.25,
+			attenuator: 0.03,
+			repulsion: 0.07,
+			spawnRate: 1.0,
+		} : makeGui({
 			inertia: {
 				min: 0,
 				max: 0.5,
@@ -53,10 +58,6 @@
 			attenuator: {
 				min: 0.01,
 				max: 0.07,
-			},
-			meanForce: {
-				min: 0.0,
-				max: 0.95,
 			},
 			repulsion: {
 				min: 0.05,
