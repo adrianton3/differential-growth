@@ -15,12 +15,13 @@
 	const runs = 4
 
 	let phonyVar = 0
+	const pointer = Vec2.make(0, 0)
 
 	function run () {
 		const joints = createJoints()
 
 		for (let i = 0; i < 1500; i++) {
-			advance(config, joints)
+			advance(config, joints, pointer)
 			multiply(joints)
 		}
 
