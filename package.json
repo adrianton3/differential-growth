@@ -1,0 +1,10 @@
+{
+  "name": "differential-growth",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "optimize": "tools/optimize.sh"
+  },
+  "dependencies": {
+    "google-closure-compiler": "^20170409.0.0"
+  }
+}
